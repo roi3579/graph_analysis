@@ -1,4 +1,5 @@
 from igraph import Graph
+from mysql.connector import (connection)
 
 
 class GraphWrapper:
@@ -24,6 +25,31 @@ class GraphWrapper:
 
         return edge_to_weight_dict
 
+    def __init_edges_list_from_db(self):
+        edge_to_weight_dict ={}
+        cnx = connection.MySQLConnection(user='naamanr', password='3579',
+                                         host='132.71.121.215',
+                                         database='ljhistory')
+
+        cursor = cnx.cursor()
+
+        query = "select f.Source,f.Dest from ljhistory.friends_0001 f where f.Source!= f.Dest" \
+                " limit 100"
+        cursor.execute(query)
+        count = 0
+        for v_src, v_trg in cursor:
+            count +=1
+            self.__add_new_vertex(v_src)
+            self.__add_new_vertex(v_trg)
+            src_index = self._vertex_to_index_dict[v_src]
+            trg_index = self._vertex_to_index_dict[v_trg]
+            edge_to_weight_dict[(src_index, trg_index)] = 1
+
+        print count
+        cnx.close()
+
+        return edge_to_weight_dict
+
     def __add_new_vertex(self, vertex_name):
         if not self._vertex_to_index_dict.has_key(vertex_name):
             self._vertex_to_index_dict[vertex_name] = self._number_of_vertices
@@ -38,11 +64,19 @@ class GraphWrapper:
         for edge in edge_to_weight_dict.keys():
             self._graph[edge[0], edge[1]] = edge_to_weight_dict[edge]
 
+
+
     def load_from_file(self, is_directed=False, file_path='./'):
         edge_to_weight_dict = self.__init_edges_list_from_file(file_path)
 
         self.__init_graph_by_edges_list(edge_to_weight_dict, is_directed)
 
+
+
+    def load_from_db(self,is_directed=False):
+        edge_to_weight_dict = self.__init_edges_list_from_db()
+
+        self.__init_graph_by_edges_list(edge_to_weight_dict, is_directed)
 
     def coreness(self, vertices_list=None):
         vertex_to_kcore = {}
