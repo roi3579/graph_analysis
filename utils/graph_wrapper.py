@@ -33,8 +33,7 @@ class GraphWrapper:
 
         cursor = cnx.cursor()
 
-        query = "select f.Source,f.Dest from ljhistory.friends_0001 f where f.Source!= f.Dest" \
-                " limit 100"
+        query = "select f.Source,f.Dest from ljhistory.friends_0001 f where f.Source!= f.Dest"
         cursor.execute(query)
         count = 0
         for v_src, v_trg in cursor:
