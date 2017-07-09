@@ -1,8 +1,6 @@
 import numpy as np
 from numpy import inf
 
-
-
 class BFS:
     def bfs_momemts(self,graph,vertices_indexes=None):
         if vertices_indexes is None:

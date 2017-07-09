@@ -16,7 +16,7 @@ class GraphWrapper:
         edge_to_weight_dict = {}
         lines = open(file_path).readlines()
         for line in lines:
-            words = line.replace('\n', '').split(' ')
+            words = line.replace('\n', '').replace('\r','').replace('\t',' ').split(' ')
             v_src = words[0]
             v_trg = words[1]
             weight = float(words[2])
@@ -160,6 +160,9 @@ class GraphWrapper:
                 vertex_to_bfs_moments[vertex_name] = vertices_bfs_moments[vertex_index]
 
         return vertex_to_bfs_moments
+
+    def get_vertices_list(self):
+        return self._vertex_to_index_dict.keys()
 
     def print_edges_list(self):
         for edge in self._graph.get_edgelist():
