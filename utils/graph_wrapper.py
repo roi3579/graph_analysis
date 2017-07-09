@@ -1,5 +1,6 @@
 from igraph import Graph
 from mysql.connector import (connection)
+import json
 
 
 class GraphWrapper:
@@ -25,15 +26,19 @@ class GraphWrapper:
 
         return edge_to_weight_dict
 
-    def __init_edges_list_from_db(self):
+    def __init_edges_list_from_db(self,file_path):
         edge_to_weight_dict ={}
-        cnx = connection.MySQLConnection(user='naamanr', password='3579',
-                                         host='132.71.121.215',
-                                         database='ljhistory')
+        f = open(file_path,'r')
+        db_paras = json.load(f)
+        connection_params = db_paras['connection_details']
+        cnx = connection.MySQLConnection(user=connection_params['user'],
+                                         password=connection_params['pass'],
+                                         host=connection_params['host'],
+                                         database=connection_params['database'])
 
         cursor = cnx.cursor()
 
-        query = "select f.Source,f.Dest from ljhistory.friends_0001 f where f.Source!= f.Dest"
+        query = db_paras['edges_query']
         cursor.execute(query)
         count = 0
         for v_src, v_trg in cursor:
@@ -63,17 +68,13 @@ class GraphWrapper:
         for edge in edge_to_weight_dict.keys():
             self._graph[edge[0], edge[1]] = edge_to_weight_dict[edge]
 
-
-
     def load_from_file(self, is_directed=False, file_path='./'):
         edge_to_weight_dict = self.__init_edges_list_from_file(file_path)
 
         self.__init_graph_by_edges_list(edge_to_weight_dict, is_directed)
 
-
-
-    def load_from_db(self,is_directed=False):
-        edge_to_weight_dict = self.__init_edges_list_from_db()
+    def load_from_db(self,is_directed=False,file_path=None):
+        edge_to_weight_dict = self.__init_edges_list_from_db(file_path=file_path)
 
         self.__init_graph_by_edges_list(edge_to_weight_dict, is_directed)
 

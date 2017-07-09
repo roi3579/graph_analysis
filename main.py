@@ -17,20 +17,23 @@ feature_saver.save_vertex_features_to_file(pagerank_features,'./data/roi_data/pa
 
 print 'start graph',datetime.datetime.now()
 graph_wrapper = GraphWrapper()
-graph_wrapper.load_from_db(is_directed=True)
+base_folder = './data/directed/livejournal/snap0001'
+input_path = base_folder+'/input.json'
+graph_wrapper.load_from_db(is_directed=True,file_path=input_path)
 # graph_wrapper.print_edges_list()
 
 print 'start kcore', datetime.datetime.now()
 kcore_features= graph_wrapper.coreness()
 print 'start write', datetime.datetime.now()
 # print kcore_features
-feature_saver.save_vertex_features_to_file(kcore_features,'./data/roi_data/kcore.txt')
+
+feature_saver.save_vertex_features_to_file(kcore_features,base_folder+'/kcore.txt')
 print 'start page',datetime.datetime.now()
 
 pagerank_features= graph_wrapper.page_rank()
 print 'start write', datetime.datetime.now()
 # print pagerank_features
-feature_saver.save_vertex_features_to_file(pagerank_features,'./data/roi_data/page_rank.txt')
+feature_saver.save_vertex_features_to_file(pagerank_features,base_folder+'/page_rank.txt')
 print 'done write', datetime.datetime.now()
 
 
