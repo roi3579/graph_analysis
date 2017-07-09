@@ -30,8 +30,8 @@ class GraphWrapper:
 
     def __init_edges_list_from_db(self,file_path):
         edge_to_weight_dict ={}
-        f = open(file_path,'r')
-        db_paras = json.load(f)
+        with open(file_path,'r') as f:
+            db_paras = json.load(f)
         connection_params = db_paras['connection_details']
         cnx = connection.MySQLConnection(user=connection_params['user'],
                                          password=connection_params['pass'],
