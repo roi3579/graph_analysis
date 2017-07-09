@@ -78,7 +78,7 @@ class GraphWrapper:
 
         self.__init_graph_by_edges_list(edge_to_weight_dict, is_directed)
 
-    def coreness(self, vertices_list=None):
+    def k_coreness(self, vertices_list=None):
         vertex_to_kcore = {}
         vertices_coreness = self._graph.coreness()
 
@@ -107,6 +107,23 @@ class GraphWrapper:
                 vertex_to_pagerank[vertex_name] = vertices_pagerank[vertex_index]
 
         return vertex_to_pagerank
+
+    def closeness(self, vertices_list=None):
+        vertex_to_closeness = {}
+        if vertices_list is not None:
+            vertex_indexes = [self._vertex_to_index_dict[vertex_name] for vertex_name in vertices_list]
+            vertices_closeness = self._graph.closeness(vertices=vertex_indexes)
+            for index in range(len(vertex_indexes)):
+                vertex_index = vertex_indexes[index]
+                vertex_name = self._index_to_vertex_dict[vertex_index]
+                vertex_to_closeness[vertex_name] = vertices_closeness[index]
+        else:
+            vertices_closeness = self._graph.closeness()
+            for vertex_index in range(self._number_of_vertices):
+                vertex_name = self._index_to_vertex_dict[vertex_index]
+                vertex_to_closeness[vertex_name] = vertices_closeness[vertex_index]
+
+        return vertex_to_closeness
 
     def print_edges_list(self):
         for edge in self._graph.get_edgelist():

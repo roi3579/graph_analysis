@@ -7,13 +7,18 @@ feature_saver = FeatureSaver()
 
 graph_wrapper.load_from_file(is_directed=True,file_path='./data/roi_data/input.txt')
 
-kcore_features= graph_wrapper.coreness()
+kcore_features= graph_wrapper.k_coreness()
 # print kcore_features
 feature_saver.save_vertex_features_to_file(kcore_features,'./data/roi_data/kcore.txt')
 
 pagerank_features= graph_wrapper.page_rank()
 # print pagerank_features
-feature_saver.save_vertex_features_to_file(pagerank_features,'./data/roi_data/page_rank.txt')
+feature_saver.save_vertex_features_to_file(pagerank_features, './data/roi_data/page_rank.txt')
+
+closeness_features= graph_wrapper.closeness()
+# print closeness_features
+feature_saver.save_vertex_features_to_file(closeness_features, './data/roi_data/closeness.txt')
+
 
 print 'start graph',datetime.datetime.now()
 graph_wrapper = GraphWrapper()
@@ -23,7 +28,7 @@ graph_wrapper.load_from_db(is_directed=True,file_path=input_path)
 # graph_wrapper.print_edges_list()
 
 print 'start kcore', datetime.datetime.now()
-kcore_features= graph_wrapper.coreness()
+kcore_features= graph_wrapper.k_coreness()
 print 'start write', datetime.datetime.now()
 # print kcore_features
 
@@ -33,8 +38,17 @@ print 'start page',datetime.datetime.now()
 pagerank_features= graph_wrapper.page_rank()
 print 'start write', datetime.datetime.now()
 # print pagerank_features
-feature_saver.save_vertex_features_to_file(pagerank_features,base_folder+'/page_rank.txt')
+feature_saver.save_vertex_features_to_file(pagerank_features, base_folder + '/page_rank.txt')
+
+print 'start closeness',datetime.datetime.now()
+closeness_features= graph_wrapper.page_rank()
+print 'start write', datetime.datetime.now()
+# print pagerank_features
+feature_saver.save_vertex_features_to_file(closeness_features, base_folder + '/closeness.txt')
 print 'done write', datetime.datetime.now()
+
+
+
 
 
 
