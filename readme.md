@@ -4,3 +4,19 @@ sudo apt-get install mysql-server
 sudo apt-get install python-setuptools python-dev build-essential
 sudo apt-get install libmysqlclient-dev
 
+
+
+algos we have:
+closeness
+betweenness
+kcore
+pagerank
+bfs moments
+
+
+algos we do not have:
+ab
+flow
+motif
+load centrality
+

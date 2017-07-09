@@ -6,6 +6,8 @@ graph_wrapper = GraphWrapper()
 feature_saver = FeatureSaver()
 
 graph_wrapper.load_from_file(is_directed=True,file_path='./data/roi_data/input.txt')
+# graph_wrapper.print_vertices_list()
+# graph_wrapper.print_edges_list()
 
 kcore_features= graph_wrapper.k_coreness()
 # print kcore_features
@@ -18,6 +20,16 @@ feature_saver.save_vertex_features_to_file(pagerank_features, './data/roi_data/p
 closeness_features= graph_wrapper.closeness()
 # print closeness_features
 feature_saver.save_vertex_features_to_file(closeness_features, './data/roi_data/closeness.txt')
+
+betweenness_features= graph_wrapper.betweenness()
+# print betweenness_features
+feature_saver.save_vertex_features_to_file(betweenness_features, './data/roi_data/betweenness.txt')
+
+bfs_moments= graph_wrapper.bfs_moments()
+# print bfs_moments
+feature_saver.save_vertex_features_to_file(bfs_moments, './data/roi_data/bfs_moments.txt')
+
+
 
 
 print 'start graph',datetime.datetime.now()

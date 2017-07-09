@@ -1,5 +1,6 @@
 from igraph import Graph
 from mysql.connector import (connection)
+from graph_algos.bfs import BFS
 import json
 
 
@@ -9,6 +10,7 @@ class GraphWrapper:
         self._vertex_to_index_dict = {}
         self._index_to_vertex_dict = {}
         self._number_of_vertices = 0
+        self._bfs = BFS()
 
     def __init_edges_list_from_file(self, file_path):
         edge_to_weight_dict = {}
@@ -125,8 +127,47 @@ class GraphWrapper:
 
         return vertex_to_closeness
 
+    def betweenness(self, vertices_list=None):
+        vertex_to_betweenness = {}
+        if vertices_list is not None:
+            vertex_indexes = [self._vertex_to_index_dict[vertex_name] for vertex_name in vertices_list]
+            vertices_betweenness = self._graph.betweenness(vertices=vertex_indexes)
+            for index in range(len(vertex_indexes)):
+                vertex_index = vertex_indexes[index]
+                vertex_name = self._index_to_vertex_dict[vertex_index]
+                vertex_to_betweenness[vertex_name] = vertices_betweenness[index]
+        else:
+            vertices_betweenness = self._graph.betweenness()
+            for vertex_index in range(self._number_of_vertices):
+                vertex_name = self._index_to_vertex_dict[vertex_index]
+                vertex_to_betweenness[vertex_name] = vertices_betweenness[vertex_index]
+
+        return vertex_to_betweenness
+
+    def bfs_moments(self ,vertices_list=None):
+        vertex_to_bfs_moments = {}
+        if vertices_list is not None:
+            vertex_indexes = [self._vertex_to_index_dict[vertex_name] for vertex_name in vertices_list]
+            vertices_bfs_moments = self._bfs.bfs_momemts(self._graph, vertex_indexes)
+            for index in range(len(vertex_indexes)):
+                vertex_index = vertex_indexes[index]
+                vertex_name = self._index_to_vertex_dict[vertex_index]
+                vertex_to_bfs_moments[vertex_name] = vertices_bfs_moments[vertex_index]
+        else:
+            vertices_bfs_moments = self._bfs.bfs_momemts(self._graph)
+            for vertex_index in range(self._number_of_vertices):
+                vertex_name = self._index_to_vertex_dict[vertex_index]
+                vertex_to_bfs_moments[vertex_name] = vertices_bfs_moments[vertex_index]
+
+        return vertex_to_bfs_moments
+
     def print_edges_list(self):
         for edge in self._graph.get_edgelist():
+            print edge
             print self._index_to_vertex_dict[edge[0]], \
                 self._index_to_vertex_dict[edge[1]], \
                 self._graph[edge[0], edge[1]]
+
+    def print_vertices_list(self):
+        for v in self._graph.vs():
+            print v.index
