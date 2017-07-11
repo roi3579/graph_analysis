@@ -1,5 +1,5 @@
 from igraph import Graph
-from mysql.connector import (connection)
+import pymysql
 from graph_algos.bfs import BFS
 import json
 
@@ -33,10 +33,10 @@ class GraphWrapper:
         with open(file_path,'r') as f:
             db_paras = json.load(f)
         connection_params = db_paras['connection_details']
-        cnx = connection.MySQLConnection(user=connection_params['user'],
-                                         password=connection_params['pass'],
-                                         host=connection_params['host'],
-                                         database=connection_params['database'])
+        cnx = pymysql.connect(user=connection_params['user'],
+                              password=connection_params['pass'],
+                              host=connection_params['host'],
+                              database=connection_params['database'])
 
         cursor = cnx.cursor()
 
