@@ -80,6 +80,24 @@ class GraphWrapper:
 
         self.__init_graph_by_edges_list(edge_to_weight_dict, is_directed)
 
+    def degree(self,vertices_list=None):
+        vertex_to_degree = {}
+        if vertices_list is not None:
+            vertex_indexes = [self._vertex_to_index_dict[vertex_name] for vertex_name in vertices_list]
+            vertices_degree_in = self._graph.degree(vertices=vertex_indexes,mode="in")
+            vertices_degree_out = self._graph.degree(vertices=vertex_indexes,mode="out")
+        else:
+            vertices_degree_in = self._graph.degree(mode="in")
+            vertices_degree_out = self._graph.degree(mode="out")
+            vertex_indexes = range(self._number_of_vertices)
+
+        for index in range(len(vertex_indexes)):
+            vertex_index = vertex_indexes[index]
+            vertex_name = self._index_to_vertex_dict[vertex_index]
+            vertex_to_degree[vertex_name] = [vertices_degree_in[index], vertices_degree_out[index]]
+
+        return vertex_to_degree
+
     def k_coreness(self, vertices_list=None):
         vertex_to_kcore = {}
         vertices_coreness = self._graph.coreness()

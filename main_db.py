@@ -20,6 +20,11 @@ graph_wrapper.load_from_db(is_directed=True,file_path=input_path)
 vertices_list = graph_wrapper.get_vertices_list()
 random_vertices = random.sample(vertices_list,number_of_random_vertics)
 
+print 'start degrees',datetime.datetime.now()
+degrees= graph_wrapper.degree(vertices_list=random_vertices)
+print 'start write', datetime.datetime.now()
+feature_saver.save_vertex_features_to_file(degrees, oupput_folder + '/degrees.txt')
+
 print 'start kcore', datetime.datetime.now()
 kcore_features= graph_wrapper.k_coreness(vertices_list=random_vertices)
 print 'start write', datetime.datetime.now()

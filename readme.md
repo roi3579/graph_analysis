@@ -12,11 +12,12 @@ betweenness
 kcore
 pagerank
 bfs moments
-
+in&out degree
 
 algos we do not have:
 ab
 flow
 motif
 load centrality
+
 
