@@ -7,13 +7,14 @@ import sys
 graph_wrapper = GraphWrapper()
 feature_saver = FeatureSaver()
 
+# graph_wrapper.load_from_file(is_directed=True,file_path='./data/roi_data/input.txt')
 graph_wrapper.load_from_file(is_directed=True,file_path='./data/roi_data/cora.txt')
 # graph_wrapper.print_vertices_list()
 # graph_wrapper.print_edges_list()
 
 kcore_features= graph_wrapper.k_coreness()
 # print kcore_features
-feature_saver.save_vertex_features_to_file(kcore_features,'./data/roi_data/kcore.txt')
+feature_saver.save_vertex_features_to_file(kcore_features, './data/roi_data/kcore.txt')
 
 pagerank_features= graph_wrapper.page_rank()
 # print pagerank_features
@@ -31,3 +32,9 @@ bfs_moments= graph_wrapper.bfs_moments()
 # print bfs_moments
 feature_saver.save_vertex_features_to_file(bfs_moments, './data/roi_data/bfs_moments.txt')
 
+degrees = graph_wrapper.degree()
+# print bfs_moments
+feature_saver.save_vertex_features_to_file(degrees, './data/roi_data/degrees.txt')
+
+motifs = graph_wrapper.motif_3(vertices_list=None, motif_veriation_folder='./graph_algos/motifs_veriation')
+feature_saver.save_vertex_features_to_file(motifs, './data/roi_data/motifs_3.txt')

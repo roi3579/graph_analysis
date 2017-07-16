@@ -1,4 +1,5 @@
 from igraph import Graph
+from graph_algos.motif import Motif
 import pymysql
 from graph_algos.bfs import BFS
 import json
@@ -178,6 +179,18 @@ class GraphWrapper:
                 vertex_to_bfs_moments[vertex_name] = vertices_bfs_moments[vertex_index]
 
         return vertex_to_bfs_moments
+
+    def motif_3(self, vertices_list=None, motif_veriation_folder='./'):
+        if vertices_list != None:
+            vertices_list = [self._vertex_to_index_dict[v] for v in vertices_list]
+
+        motif = Motif(self._graph.is_directed(), motif_veriation_folder)
+        hist = motif.compute_motif(self._graph,vertices_list, 3)
+
+        result_hist = {}
+        for v in hist.keys():
+            result_hist[self._index_to_vertex_dict[v]] = hist[v]
+        return result_hist
 
     def get_vertices_list(self):
         return self._vertex_to_index_dict.keys()
