@@ -180,12 +180,12 @@ class GraphWrapper:
 
         return vertex_to_bfs_moments
 
-    def motif_3(self, vertices_list=None, motif_veriation_folder='./'):
+    def motif(self, vertices_list=None, motif_veriation_folder='./',motif_size=3):
         if vertices_list != None:
             vertices_list = [self._vertex_to_index_dict[v] for v in vertices_list]
 
         motif = Motif(self._graph.is_directed(), motif_veriation_folder)
-        hist = motif.compute_motif(self._graph,vertices_list, 3)
+        hist = motif.compute_motif(self._graph,vertices_list, motif_size)
 
         result_hist = {}
         for v in hist.keys():

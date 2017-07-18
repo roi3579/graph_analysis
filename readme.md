@@ -13,11 +13,12 @@ kcore
 pagerank
 bfs moments
 in&out degree
+motif(vertices)
 
 algos we do not have:
 ab
 flow
-motif
+motif(edges)
 load centrality
 
 

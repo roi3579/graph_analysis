@@ -36,5 +36,9 @@ degrees = graph_wrapper.degree()
 # print bfs_moments
 feature_saver.save_vertex_features_to_file(degrees, './data/roi_data/degrees.txt')
 
-motifs = graph_wrapper.motif_3(vertices_list=None, motif_veriation_folder='./graph_algos/motifs_veriation')
+motifs = graph_wrapper.motif(vertices_list=None, motif_veriation_folder='./graph_algos/motifs_veriation',motif_size=3)
 feature_saver.save_vertex_features_to_file(motifs, './data/roi_data/motifs_3.txt')
+
+motifs = graph_wrapper.motif(vertices_list=None, motif_veriation_folder='./graph_algos/motifs_veriation',motif_size=4)
+feature_saver.save_vertex_features_to_file(motifs, './data/roi_data/motifs_4.txt')
+

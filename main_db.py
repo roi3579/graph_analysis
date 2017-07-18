@@ -51,9 +51,14 @@ print 'start write', datetime.datetime.now()
 feature_saver.save_vertex_features_to_file(bfs_moments, oupput_folder + '/bfs_moments.txt')
 
 print 'start motif3',datetime.datetime.now()
-motifs_3= graph_wrapper.motif_3(vertices_list=random_vertices, motif_veriation_folder='./graph_algos/motifs_veriation')
+motifs_3= graph_wrapper.motif(vertices_list=random_vertices, motif_veriation_folder='./graph_algos/motifs_veriation',motif_size=3)
 print 'start write', datetime.datetime.now()
 feature_saver.save_vertex_features_to_file(motifs_3, oupput_folder + '/motifs3.txt')
+
+print 'start motif4',datetime.datetime.now()
+motifs_4= graph_wrapper.motif(vertices_list=random_vertices, motif_veriation_folder='./graph_algos/motifs_veriation',motif_size=4)
+print 'start write', datetime.datetime.now()
+feature_saver.save_vertex_features_to_file(motifs_4, oupput_folder + '/motifs4.txt')
 print 'done write', datetime.datetime.now()
 
 

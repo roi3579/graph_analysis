@@ -52,15 +52,17 @@ class Motif:
         return set(g.neighbors(vertex, mode="in")).union(
             set(g.neighbors(vertex, mode="out")))
 
-
     def __add_to_hist_by_subgraph(self,subg, comb):
         n=comb[0]
-        self._motif_hist[n][self._motif_3_veriation_dict[subg]] += 1
+        motif_size = len(comb)
+        if motif_size ==3:
+            self._motif_hist[n][self._motif_3_veriation_dict[subg]] += 1
+        elif motif_size ==4:
+            self._motif_hist[n][self._motif_4_veriation_dict[subg]] += 1
 
     def __combination_calc(self, g, comb):
         subg = self.__to_subgrap_str(g, comb)
         self.__add_to_hist_by_subgraph(subg, comb)
-
 
     def __to_subgrap_str(self,g, comb):
         if (g.is_directed()):
@@ -89,6 +91,14 @@ class Motif:
                 subg = subg + '0'
         return subg
 
+    def __init_motif_hist(self, vertices_list, veriation_dict):
+        for v in vertices_list:
+            self._motif_hist[v] = [0] * (max(veriation_dict) + 1)
+
+    def __init_vertices_list(self, g, vertices_list):
+        if vertices_list is None:
+            vertices_list = range(g.vcount())
+        return vertices_list
 
     def __get_sub_tree(self,g, root, veriation, visited_vertices, visited_index):
         if (veriation == (1, 1)):
@@ -118,17 +128,56 @@ class Motif:
                         s = [root, comb[0], comb[1]]
                         self.__combination_calc(g, s)
 
+        if (veriation == (1, 1, 1)):
+            neighbors_first_deg = self.__neighbor(g, root)
+            for n in neighbors_first_deg:
+                visited_vertices[n] = 1
+            for comb in itertools.combinations(list(neighbors_first_deg), 3):
+                comb = [root, comb[0], comb[1], comb[2]]
+                self.__combination_calc(g,  comb)
+
+            for n1 in neighbors_first_deg:
+                neighbors_sec_deg = self.__neighbor(g, n1)
+                for n in neighbors_sec_deg:
+                    if (not visited_vertices.has_key(n)):
+                        visited_vertices[n] = 2
+                for n2 in neighbors_sec_deg:
+                    for n11 in neighbors_first_deg:
+                        if (visited_vertices[n2] in [2,3] and n1 != n11):
+                            comb = [root, n1, n11, n2]
+                            self.__combination_calc(g, comb)
+
+                for comb in itertools.combinations(neighbors_sec_deg, 2):
+                    if (visited_vertices[comb[0]] == 2 and visited_vertices[comb[1]] == 2):
+                        comb = [root, n1, comb[0], comb[1]]
+                        self.__combination_calc(g, comb)
+
+                for n2 in neighbors_sec_deg:
+                    for n3 in self.__neighbor(g, n2):
+                        if (not visited_vertices.has_key(n3)):
+                            visited_vertices[n3] = 3
+                            if (visited_vertices[n2] == 2):
+                                s = [root, n1, n2, n3]
+                                self.__combination_calc(g, comb)
+                        else:
+                            if (visited_vertices[n3] == 3 and visited_vertices[n2] == 2):
+                                comb = [root, n1, n2, n3]
+                                self.__combination_calc(g, comb)
+
     def compute_motif(self,g, vertices_list=None, motif_size=3):
-        if vertices_list is None:
-            vertices_list = range(g.vcount())
+        vertices_list = self.__init_vertices_list(g, vertices_list)
 
-        for v in vertices_list:
-            self._motif_hist[v] = [0]*(max(self._motif_3_veriation_dict.values())+1)
-
-        for v in vertices_list:
-            visited_vertices = {v: 0}
-            [visited_vertices, visited_index] = self.__get_sub_tree(g, v, (1, 1), visited_vertices, 1)
-            self.__get_sub_tree(g, v, (2, 0), visited_vertices, visited_index)
+        if motif_size == 3:
+            self.__init_motif_hist(vertices_list, self._motif_3_veriation_dict.values())
+            for v in vertices_list:
+                visited_vertices = {v: 0}
+                [visited_vertices, visited_index] = self.__get_sub_tree(g, v, (1, 1), visited_vertices, 1)
+                self.__get_sub_tree(g, v, (2, 0), visited_vertices, visited_index)
+        elif motif_size == 4:
+            self.__init_motif_hist(vertices_list, self._motif_4_veriation_dict.values())
+            for v in vertices_list:
+                visited_vertices = {v: 0}
+                self.__get_sub_tree(g, v, (1, 1, 1), visited_vertices, 1)
 
         return self._motif_hist
 
