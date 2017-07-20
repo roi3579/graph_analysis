@@ -1,0 +1,9 @@
+{
+  "edges_query": "select f.Source, f.Dest from ljhistory.friends_0004 f where f.Source!= f.Dest",
+  "connection_details": {
+    "host": "132.71.121.215",
+    "database": "ljhistory",
+    "user": "naamanr",
+    "pass": "3579"
+  }
+}
