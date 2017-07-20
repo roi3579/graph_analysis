@@ -1,7 +1,9 @@
 from igraph import Graph
 from graph_algos.motif import Motif
+from graph_algos.flow import Flow
 import pymysql
 from graph_algos.bfs import BFS
+import random
 import json
 
 
@@ -12,6 +14,21 @@ class GraphWrapper:
         self._index_to_vertex_dict = {}
         self._number_of_vertices = 0
         self._bfs = BFS()
+        self._flow = Flow()
+
+    def __init__edges_list_from_list(self, edge_list):
+        edge_to_weight_dict = {}
+        for edge in edge_list:
+            v_src = edge[0]
+            v_trg = edge[1]
+            weight = 1.0
+            self.__add_new_vertex(v_src)
+            self.__add_new_vertex(v_trg)
+            src_index = self._vertex_to_index_dict[v_src]
+            trg_index = self._vertex_to_index_dict[v_trg]
+            edge_to_weight_dict[(src_index, trg_index)] = weight
+
+        return edge_to_weight_dict
 
     def __init_edges_list_from_file(self, file_path):
         edge_to_weight_dict = {}
@@ -29,7 +46,7 @@ class GraphWrapper:
 
         return edge_to_weight_dict
 
-    def __init_edges_list_from_db(self,file_path):
+    def __init_edges_list_from_db(self, file_path):
         edge_to_weight_dict ={}
         with open(file_path,'r') as f:
             db_paras = json.load(f)
@@ -63,7 +80,7 @@ class GraphWrapper:
             self._index_to_vertex_dict[self._number_of_vertices] = vertex_name
             self._number_of_vertices += 1
 
-    def __init_graph_by_edges_list(self, edge_to_weight_dict, is_directed):
+    def __init_graph_by_edges_dict(self, edge_to_weight_dict, is_directed):
         self._graph = Graph(directed=is_directed)
         self._graph.add_vertices(self._number_of_vertices)
         self._graph.add_edges(edge_to_weight_dict.keys())
@@ -74,14 +91,14 @@ class GraphWrapper:
     def load_from_file(self, is_directed=False, file_path='./'):
         edge_to_weight_dict = self.__init_edges_list_from_file(file_path)
 
-        self.__init_graph_by_edges_list(edge_to_weight_dict, is_directed)
+        self.__init_graph_by_edges_dict(edge_to_weight_dict, is_directed)
 
-    def load_from_db(self,is_directed=False,file_path=None):
+    def load_from_db(self, is_directed=False, file_path=None):
         edge_to_weight_dict = self.__init_edges_list_from_db(file_path=file_path)
 
-        self.__init_graph_by_edges_list(edge_to_weight_dict, is_directed)
+        self.__init_graph_by_edges_dict(edge_to_weight_dict, is_directed)
 
-    def degree(self,vertices_list=None):
+    def degree(self, vertices_list=None):
         vertex_to_degree = {}
         if vertices_list is not None:
             vertex_indexes = [self._vertex_to_index_dict[vertex_name] for vertex_name in vertices_list]
@@ -163,7 +180,7 @@ class GraphWrapper:
 
         return vertex_to_betweenness
 
-    def bfs_moments(self ,vertices_list=None):
+    def bfs_moments(self, vertices_list=None):
         vertex_to_bfs_moments = {}
         if vertices_list is not None:
             vertex_indexes = [self._vertex_to_index_dict[vertex_name] for vertex_name in vertices_list]
@@ -180,7 +197,7 @@ class GraphWrapper:
 
         return vertex_to_bfs_moments
 
-    def motif(self, vertices_list=None, motif_veriation_folder='./',motif_size=3):
+    def motif(self, vertices_list=None, motif_veriation_folder='./', motif_size=3):
         if vertices_list != None:
             vertices_list = [self._vertex_to_index_dict[v] for v in vertices_list]
 
@@ -192,16 +209,40 @@ class GraphWrapper:
             result_hist[self._index_to_vertex_dict[v]] = hist[v]
         return result_hist
 
+    def flow(self, vertices_list=None):
+        if None != vertices_list:
+            vertices_list = [self._vertex_to_index_dict[v] for v in vertices_list]
+        flow_dict = self._flow.compute_flow(self._graph, vertices_list, threshold=0.1)
+
+        result_dict = {}
+        for v in flow_dict:
+            result_dict[self._index_to_vertex_dict[v]] = flow_dict[v]
+        return result_dict
+
+    def sample_edges(self, number_of_edges):
+        sub_edges_list = random.sample(self.get_edges_list(),number_of_edges)
+        sub_graph_wrapper = GraphWrapper()
+        edge_weight_dict = sub_graph_wrapper.__init__edges_list_from_list(sub_edges_list)
+        sub_graph_wrapper.__init_graph_by_edges_dict(edge_weight_dict, is_directed=self._graph.is_directed)
+
+        return sub_graph_wrapper
+
+
+    def get_max_connected_vertices(self, mode='WEAK'):
+        clusters = self._graph.clusters(mode=mode)
+        biggest_connected = []
+        for c in clusters:
+            if len(biggest_connected) < len(c):
+                biggest_connected = c
+        return [self._index_to_vertex_dict[v_i] for v_i in biggest_connected]
+
     def get_vertices_list(self):
         return self._vertex_to_index_dict.keys()
 
-    def print_edges_list(self):
-        for edge in self._graph.get_edgelist():
-            print edge
-            print self._index_to_vertex_dict[edge[0]], \
-                self._index_to_vertex_dict[edge[1]], \
-                self._graph[edge[0], edge[1]]
-
+    def get_edges_list(self):
+        edge_list = [(self._index_to_vertex_dict[edge[0]], self._index_to_vertex_dict[edge[1]])
+                     for edge in self._graph.get_edgelist()]
+        return edge_list
     def print_vertices_list(self):
         for v in self._graph.vs():
             print v.index
