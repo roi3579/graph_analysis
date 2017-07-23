@@ -22,12 +22,12 @@ def graph_sample_uniform(graph_wrapper,sample_size):
 def graph_sample_explore(graph_wrapper, number_of_start_vertices, explore_length):
     write_log('start vertices: {0}'.format(number_of_start_vertices))
     write_log('length from start: {0}'.format(explore_length))
-    graph_wrapper = graph_wrapper.sample_by_vertices_explore(number_of_start_vertices=number_of_start_vertices,
-                                                             explore_length=explore_length)
-    write_log('total vertices: {0}'.format(len(graph_wrapper.get_vertices_list())))
-    random_vertices = graph_wrapper.get_max_connected_vertices(mode='WEAK')
+    sub_g = graph_wrapper.sample_by_vertices_explore(number_of_start_vertices=number_of_start_vertices,
+                                                     explore_length=explore_length)
+    write_log('total vertices: {0}'.format(len(sub_g.get_vertices_list())))
+    random_vertices = sub_g.get_max_connected_vertices(mode='WEAK')
     write_log('max connected vertices: {0}'.format(len(random_vertices)))
-    degrees = graph_wrapper.degree(vertices_list=random_vertices)
+    degrees = sub_g.degree(vertices_list=random_vertices)
     count_edge = 0
     for v in degrees:
         count_edge += degrees[v][0]
@@ -35,18 +35,42 @@ def graph_sample_explore(graph_wrapper, number_of_start_vertices, explore_length
     write_log('vertices: {0}\n'.format(len(random_vertices)))
 
 
+def graph_sample_by_vertices(graph_wrapper, number_of_vertices):
+    sub_g = graph_wrapper.sample_uniform_by_vertices(number_of_vertices=number_of_vertices)
+    write_log('total vertices: {0}'.format(len(sub_g.get_vertices_list())))
+    random_vertices = sub_g.get_max_connected_vertices(mode='WEAK')
+    write_log('max connected vertices: {0}'.format(len(random_vertices)))
+    degrees = sub_g.degree(vertices_list=random_vertices)
+    count_edge = 0
+    for v in degrees:
+        count_edge += degrees[v][0]
+    write_log('edges: {0}'.format(count_edge))
+    write_log('vertices: {0}\n'.format(len(random_vertices)))
+
 input_path = r'./data/directed/livejournal/snap0001/input.json'
 f = open('sampling_times.txt','w')
 write_log('start graph: {0}'.format( datetime.now()))
 graph_wrapper = GraphWrapper()
 feature_saver = FeatureSaver()
 graph_wrapper.load_from_db(is_directed=True, file_path=input_path)
-samples_sizes = [10000,50000,100000,1000000,2000000,4000000,8000000,16000000,32000000,64000000]
-for s in samples_sizes:
-    write_log('sample_size: {0}'.format(s))
-    graph_sample_uniform(graph_wrapper,s)
 
-write_log('finish uniform\n')
+# write_log('start uniform edes\n')
+# samples_sizes = [10000,50000,100000,1000000,2000000,4000000,8000000,16000000,32000000,64000000]
+# for s in samples_sizes:
+#     write_log(str(datetime.now()))
+#     write_log('sample_size: {0}'.format(s))
+#     graph_sample_uniform(graph_wrapper,s)
+#
+write_log('start uniform vertices\n')
+
+samples_sizes = [10000,50000,100000,200000,500000]
+for i in samples_sizes:
+    write_log(str(datetime.now()))
+    write_log('sample_size: {0}'.format(i))
+    graph_sample_by_vertices(graph_wrapper,number_of_vertices=i)
+
+write_log('start explore vertices\n')
 for start_vertices in range(1,10):
     for explore_length in range(1,3):
+        write_log(str(datetime.now()))
         graph_sample_explore(graph_wrapper, start_vertices, explore_length=explore_length)
