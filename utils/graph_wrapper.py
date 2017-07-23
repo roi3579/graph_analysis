@@ -119,6 +119,13 @@ class GraphWrapper:
 
         self.__init_graph_by_edges_dict(edge_to_weight_dict, is_directed)
 
+    def save_graph_to_file(self, file_path='./'):
+        with open(file_path, 'w') as f:
+            for e in self._graph.es:
+                v_srg = self._index_to_vertex_dict[e.source]
+                v_trg = self._index_to_vertex_dict[e.target]
+                f.writelines('{0}\t{1}\t{2}\n'.format(v_srg, v_trg, e["weight"]))
+
     def degree(self, vertices_list=None):
         vertex_to_degree = {}
         if vertices_list is not None:
