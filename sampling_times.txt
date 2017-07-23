@@ -1,0 +1,169 @@
+start graph: 2017-07-20 18:25:36.172437
+sample_size: 10000
+edges number: 5
+vertices number: 6
+
+sample_size: 50000
+edges number: 17
+vertices number: 18
+
+sample_size: 100000
+edges number: 359
+vertices number: 360
+
+sample_size: 1000000
+edges number: 580534
+vertices number: 470455
+
+sample_size: 2000000
+edges number: 1561030
+vertices number: 1085024
+
+sample_size: 4000000
+edges number: 3621846
+vertices number: 2003927
+
+sample_size: 8000000
+edges number: 7696230
+vertices number: 3113920
+
+sample_size: 16000000
+edges number: 15769405
+vertices number: 4334901
+
+sample_size: 32000000
+edges number: 31828510
+vertices number: 5633684
+
+sample_size: 64000000
+edges number: 63893518
+vertices number: 6969409
+
+finish uniform
+
+start vertices: 1
+length from start: 1
+total vertices: 2
+max connected vertices: 2
+edges: 1
+vertices: 2
+
+start vertices: 1
+length from start: 2
+total vertices: 1787
+max connected vertices: 1787
+edges: 3139
+vertices: 1787
+
+start vertices: 2
+length from start: 1
+total vertices: 69
+max connected vertices: 59
+edges: 151
+vertices: 59
+
+start vertices: 2
+length from start: 2
+total vertices: 12533
+max connected vertices: 12533
+edges: 164357
+vertices: 12533
+
+start vertices: 3
+length from start: 1
+total vertices: 22
+max connected vertices: 17
+edges: 134
+vertices: 17
+
+start vertices: 3
+length from start: 2
+total vertices: 13882
+max connected vertices: 13882
+edges: 238659
+vertices: 13882
+
+start vertices: 4
+length from start: 1
+total vertices: 148
+max connected vertices: 131
+edges: 793
+vertices: 131
+
+start vertices: 4
+length from start: 2
+total vertices: 3158
+max connected vertices: 3154
+edges: 16325
+vertices: 3154
+
+start vertices: 5
+length from start: 1
+total vertices: 27
+max connected vertices: 13
+edges: 55
+vertices: 13
+
+start vertices: 5
+length from start: 2
+total vertices: 19747
+max connected vertices: 19747
+edges: 130571
+vertices: 19747
+
+start vertices: 6
+length from start: 1
+total vertices: 52
+max connected vertices: 21
+edges: 79
+vertices: 21
+
+start vertices: 6
+length from start: 2
+total vertices: 8694
+max connected vertices: 8694
+edges: 474467
+vertices: 8694
+
+start vertices: 7
+length from start: 1
+total vertices: 280
+max connected vertices: 221
+edges: 699
+vertices: 221
+
+start vertices: 7
+length from start: 2
+total vertices: 108515
+max connected vertices: 108515
+edges: 6095640
+vertices: 108515
+
+start vertices: 8
+length from start: 1
+total vertices: 261
+max connected vertices: 116
+edges: 594
+vertices: 116
+
+start vertices: 8
+length from start: 2
+total vertices: 100866
+max connected vertices: 100866
+edges: 4917233
+vertices: 100866
+
+start vertices: 9
+length from start: 1
+total vertices: 385
+max connected vertices: 281
+edges: 1779
+vertices: 281
+
+start vertices: 9
+length from start: 2
+total vertices: 11929
+max connected vertices: 11750
+edges: 82438
+vertices: 11750
+
