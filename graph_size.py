@@ -51,7 +51,8 @@ def graph_sample_uniform_vertices(graph_wrapper, number_of_vertices):
     return sub_g
 
 input_path = r'./data/directed/livejournal/snap0001/input.json'
-f = open('sampling_times.txt','w')
+i= int(sys.argv[1])
+f = open('sampling_times_{0}.txt'.format(i),'w')
 write_log('start graph: {0}'.format( datetime.now()))
 graph_wrapper = GraphWrapper()
 feature_saver = FeatureSaver()
@@ -68,7 +69,6 @@ write_log('start uniform vertices\n')
 
 # samples_sizes = [10000,50000,100000,200000,500000,1000000]
 # for i in samples_sizes:
-i= int(sys.argv[1])
 write_log(str(datetime.now()))
 write_log('sample_size: {0}'.format(i))
 sub_g = graph_sample_uniform_vertices(graph_wrapper, number_of_vertices=i)
