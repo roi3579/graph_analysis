@@ -66,13 +66,13 @@ graph_wrapper.load_from_db(is_directed=True, file_path=input_path)
 #
 write_log('start uniform vertices\n')
 
-samples_sizes = [10000,50000,100000,200000,500000,1000000]
-for i in samples_sizes:
-    i= int(sys.argv[1])
-    write_log(str(datetime.now()))
-    write_log('sample_size: {0}'.format(i))
-    sub_g = graph_sample_uniform_vertices(graph_wrapper, number_of_vertices=i)
-    sub_g.save_graph_to_file('./data/directed/livejournal/snap0001/uniform_sample_p_{0}.txt'.format(i))
+# samples_sizes = [10000,50000,100000,200000,500000,1000000]
+# for i in samples_sizes:
+i= int(sys.argv[1])
+write_log(str(datetime.now()))
+write_log('sample_size: {0}'.format(i))
+sub_g = graph_sample_uniform_vertices(graph_wrapper, number_of_vertices=i)
+sub_g.save_graph_to_file('./data/directed/livejournal/snap0001/uniform_sample_p_{0}.txt'.format(i))
 
 # write_log('start explore vertices\n')
 # for start_vertices in range(1,10):
