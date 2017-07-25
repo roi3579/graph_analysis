@@ -265,17 +265,28 @@ class GraphWrapper:
 
     def sample_uniform_by_vertices(self, number_of_vertices=2):
         samples = {v.index:0 for v in random.sample(self._graph.vs, number_of_vertices)}
+        sub_graph_wrapper = self.__sub_graph_by_vertices(samples)
+        return sub_graph_wrapper
+
+    def __sub_graph_by_vertices(self, samples):
         sub_edges_list = []
         for e in self._graph.es:
             if e.source in samples and e.target in samples:
                 v1 = e.source
                 v2 = e.target
                 sub_edges_list.append((self._index_to_vertex_dict[v1], self._index_to_vertex_dict[v2]))
-
         sub_graph_wrapper = GraphWrapper()
         edge_weight_dict = sub_graph_wrapper.__init__edges_list_from_list(sub_edges_list)
         sub_graph_wrapper.__init_graph_by_edges_dict(edge_weight_dict, is_directed=self._graph.is_directed)
+        return sub_graph_wrapper
 
+    def create_sub_graph(self, vertices_list):
+        samples = {}
+        for v in vertices_list:
+            vertex_index = self._vertex_to_index_dict.get(v)
+            if vertex_index != None:
+                samples[vertex_index] = 0
+        sub_graph_wrapper = self.__sub_graph_by_vertices(samples)
         return sub_graph_wrapper
 
     def get_max_connected_vertices(self, mode='WEAK'):
