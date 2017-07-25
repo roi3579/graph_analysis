@@ -63,6 +63,8 @@ class GraphWrapper:
         count = 0
         for v_src, v_trg in cursor:
             count += 1
+            v_src = str(v_src)
+            v_trg = str(v_trg)
             self.__add_new_vertex(v_src)
             self.__add_new_vertex(v_trg)
             src_index = self._vertex_to_index_dict[v_src]
