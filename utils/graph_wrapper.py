@@ -12,7 +12,6 @@ class GraphWrapper:
         self._graph = None
         self._vertex_to_index_dict = {}
         self._index_to_vertex_dict = {}
-        self._vertex_to_neighbors = {}
         self._number_of_vertices = 0
         self._bfs = BFS()
         self._flow = Flow()
@@ -25,7 +24,6 @@ class GraphWrapper:
             weight = 1.0
             self.__add_new_vertex(v_src)
             self.__add_new_vertex(v_trg)
-            self.__add_edge(v_src, v_trg)
             src_index = self._vertex_to_index_dict[v_src]
             trg_index = self._vertex_to_index_dict[v_trg]
             edge_to_weight_dict[(src_index, trg_index)] = weight
@@ -42,7 +40,6 @@ class GraphWrapper:
             weight = float(words[2])
             self.__add_new_vertex(v_src)
             self.__add_new_vertex(v_trg)
-            self.__add_edge(v_src,v_trg)
             src_index = self._vertex_to_index_dict[v_src]
             trg_index = self._vertex_to_index_dict[v_trg]
             edge_to_weight_dict[(src_index, trg_index)] = weight
@@ -68,7 +65,6 @@ class GraphWrapper:
             count += 1
             self.__add_new_vertex(v_src)
             self.__add_new_vertex(v_trg)
-            self.__add_edge(v_src,v_trg)
             src_index = self._vertex_to_index_dict[v_src]
             trg_index = self._vertex_to_index_dict[v_trg]
             edge_to_weight_dict[(src_index, trg_index)] = 1
@@ -77,14 +73,6 @@ class GraphWrapper:
         cnx.close()
 
         return edge_to_weight_dict
-
-    def __add_edge(self,v_src,v_trg):
-        v_src_i = self._vertex_to_index_dict[v_src]
-        v_trg_i = self._vertex_to_index_dict[v_trg]
-        if v_src_i in self._vertex_to_neighbors:
-            self._vertex_to_neighbors[v_src_i].append(v_trg_i)
-        else:
-            self._vertex_to_neighbors[v_src_i] = [v_trg_i]
 
     def __add_new_vertex(self, vertex_name):
         if vertex_name not in self._vertex_to_index_dict:
@@ -276,16 +264,13 @@ class GraphWrapper:
         return graph_wrapper
 
     def sample_uniform_by_vertices(self, number_of_vertices=2):
-        samples = [v.index for v in random.sample(self._graph.vs, number_of_vertices)]
+        samples = {v.index:0 for v in random.sample(self._graph.vs, number_of_vertices)}
         sub_edges_list = []
-        for v1_i in range(len(samples)):
-            for v2_i in range(len(samples))[v1_i + 1:]:
-                v1 = samples[v1_i]
-                v2 = samples[v2_i]
-                if v1 in self._vertex_to_neighbors and v2 in self._vertex_to_neighbors[v1]:
-                    sub_edges_list.append((self._index_to_vertex_dict[v1], self._index_to_vertex_dict[v2]))
-                if v2 in self._vertex_to_neighbors and v1 in self._vertex_to_neighbors[v2]:
-                    sub_edges_list.append((self._index_to_vertex_dict[v2], self._index_to_vertex_dict[v1]))
+        for e in self._graph.es:
+            if e.source in samples and e.target in samples:
+                v1 = e.source
+                v2 = e.target
+                sub_edges_list.append((self._index_to_vertex_dict[v1], self._index_to_vertex_dict[v2]))
 
         sub_graph_wrapper = GraphWrapper()
         edge_weight_dict = sub_graph_wrapper.__init__edges_list_from_list(sub_edges_list)
