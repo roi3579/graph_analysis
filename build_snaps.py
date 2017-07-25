@@ -6,7 +6,7 @@ import sys
 sample_size = int(sys.argv[1])
 # sample_size = 500000
 
-input_path = r'./data/directed/livejournal/snap0001/samples/uniform_sample_p_{0}.txt'.format(sample_size)
+input_path = r'./data/directed/livejournal/snap0001/uniform_sample_p_{0}.txt'.format(sample_size)
 print 'start graph: {0}'.format( datetime.now())
 graph_wrapper = GraphWrapper()
 graph_wrapper.load_from_file(is_directed=True, file_path=input_path)
