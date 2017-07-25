@@ -1,9 +1,9 @@
 {
     "connection_details": {
-    "user":"naamanr",
+        "user":"naamanr",
     "pass":"3579",
     "host":"132.71.121.215",
     "database":"ljhistory"
     },
-    "edges_query":"select f.Source, f.Dest from ljhistory.friends_0001 f where f.Source!= f.Dest limit 100000"
+    "edges_query":"select f.Source, f.Dest from ljhistory.friends_0001 f where f.Source!= f.Dest"
 }
