@@ -19,7 +19,7 @@ output_dir = './data/directed/livejournal/snap{0}/'.format(snap)
 graph_wrapper = GraphWrapper()
 feature_saver = FeatureSaver()
 
-graph_wrapper.load_from_file(is_directed=True, file_path='./data/directed/livejournal/snap0001/uniform_sample_p_{0}.txt'.format(sample_size))
+graph_wrapper.load_from_file(is_directed=True, file_path='./data/directed/livejournal/snap{0}/uniform_sample_p_{1}.txt'.format(snap,sample_size))
 print 'edges:',len(graph_wrapper.get_edges_list())
 print 'vertices:',len(graph_wrapper.get_vertices_list())
 
