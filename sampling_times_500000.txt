@@ -1,0 +1,10 @@
+start uniform vertices
+
+2017-07-25 12:49:58.473177
+sample_size: 500000
+total vertices: 186965
+max connected vertices: 144888
+edges: 412972
+vertices: 144888
+
+2017-07-25 12:50:45.176357
