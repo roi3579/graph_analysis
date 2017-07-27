@@ -14,7 +14,7 @@ cnx = pymysql.connect(user=connection_params['user'],
 cursor = cnx.cursor()
 
 print 'start'
-query = 'SELECT InterestId FROM ljhistory.userinterests_0001 limit 5000'
+query = 'SELECT InterestId FROM ljhistory.userinterests_0001'
 cursor.execute(query)
 doi_count = {}
 for doi in cursor:
