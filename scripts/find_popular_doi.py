@@ -13,11 +13,8 @@ cnx = pymysql.connect(user=connection_params['user'],
 
 cursor = cnx.cursor()
 
-vertices = set([w.split()[0] for w in open('./../data/directed/livejournal/snap0001/uniform_sample_p_500000.txt')])
-# print vertices[0]
-print len(vertices)
-
-query = 'SELECT InterestId FROM ljhistory.userinterests_0001'
+print 'start'
+query = 'SELECT InterestId FROM ljhistory.userinterests_0001 limit 5000'
 cursor.execute(query)
 doi_count = {}
 for doi in cursor:
