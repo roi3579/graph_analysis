@@ -14,7 +14,7 @@ def chunks(l, n):
 
 def read_bulk(snap_dir, snap, vertices):
 
-    file_path = r'./../data/directed/livejournal/snap0001/input.json'
+    file_path = r'./data/directed/livejournal/snap0001/input.json'
     with open(file_path, 'r') as f:
         db_paras = json.load(f)
     connection_params = db_paras['connection_details']
@@ -122,33 +122,11 @@ sample_size = int(sys.argv[2])
 
 # chunks_size = 100000
 chunks_size = int(sys.argv[3])
-snap_dir = r'./../data/directed/livejournal/snap{0}/'.format(snap)
+snap_dir = r'./data/directed/livejournal/snap{0}/'.format(snap)
 
 graph = GraphWrapper()
-graph.load_from_file(is_directed=True,file_path='./../data/directed/livejournal/snap{0}/uniform_sample_p_{1}.txt'
+graph.load_from_file(is_directed=True,file_path='./data/directed/livejournal/snap{0}/uniform_sample_p_{1}.txt'
                      .format(snap,sample_size))
-vertices = [228055,
-                   7533007,
-                   3181142,
-                   3878987,
-                   7327620,
-                   5047630,
-                   6442433,
-                   5003845,
-                   6335940,
-                   228058,
-                   2978396,
-                   7720344,
-                   5820233,
-                   7720347,
-                   6912698,
-                   7926275,
-                   8065166,
-                   4972096,
-                   4972097,
-                   6516785,
-                   370258,
-                   425870]
 
 vertices = graph.get_vertices_list()
 vertices_chunks = list(chunks(vertices, chunks_size))
