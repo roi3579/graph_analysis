@@ -28,7 +28,7 @@ print y.shape
 deep = bool(int(sys.argv[1]))
 # deep = Fals
 if(deep):
-    from learning.deep_learning import DeepLearning
+    from deep_learning import DeepLearning
     learning = DeepLearning(learning_object)
     print 'deep'
     learning.run_learning(test_size=0.2)
