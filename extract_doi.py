@@ -110,30 +110,32 @@ def read_bulk(snap_dir, snap, vertices):
             f.writelines(str(n) + ' ' + '1\n')
         f.close()
 
-snap_i = int(sys.argv[1])
-if snap_i < 10:
-    snap = '000'+str(snap_i)
-else:
-    snap = '00'+str(snap_i)
-# snap = '0001'
 
 # sample_size = 500000
-sample_size = int(sys.argv[2])
+sample_size = int(sys.argv[1])
 
 # chunks_size = 100000
-chunks_size = int(sys.argv[3])
-snap_dir = r'./data/directed/livejournal/snap{0}/'.format(snap)
+chunks_size = int(sys.argv[2])
 
-graph = GraphWrapper()
-graph.load_from_file(is_directed=True,file_path='./data/directed/livejournal/snap{0}/uniform_sample_p_{1}.txt'
-                     .format(snap,sample_size))
+for snap_i in range(4,20):
+    print snap_i
+    if snap_i < 10:
+        snap = '000'+str(snap_i)
+    else:
+        snap = '00'+str(snap_i)
+    # snap = '0001'
+    snap_dir = r'./data/directed/livejournal/snap{0}/'.format(snap)
 
-vertices = graph.get_vertices_list()
-vertices_chunks = list(chunks(vertices, chunks_size))
-number_of_chunks = len(vertices_chunks)
-for v in vertices_chunks:
-    print datetime.now()
-    print number_of_chunks
-    number_of_chunks -=1
-    read_bulk(snap_dir,snap,v)
+    graph = GraphWrapper()
+    graph.load_from_file(is_directed=True,file_path='./data/directed/livejournal/snap{0}/uniform_sample_p_{1}.txt'
+                         .format(snap,sample_size))
+
+    vertices = graph.get_vertices_list()
+    vertices_chunks = list(chunks(vertices, chunks_size))
+    number_of_chunks = len(vertices_chunks)
+    for v in vertices_chunks:
+        print datetime.now()
+        print number_of_chunks
+        number_of_chunks -=1
+        read_bulk(snap_dir,snap,v)
 
