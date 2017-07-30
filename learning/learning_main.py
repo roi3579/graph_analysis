@@ -1,5 +1,7 @@
 from learning_loader import LearningLoader
-from classic_ml import ClassicMachineLearning
+from learning.classic_ml import ClassicMachineLearning
+
+import sys
 
 dir_path = r'./../data/directed/livejournal/snap0001/'
 ll = LearningLoader(directory_path = dir_path)
@@ -17,10 +19,17 @@ x = learning_object.features_matrix
 y = learning_object.tags_vector
 print x.shape
 print y.shape
+deep = bool(int(sys.argv[1]))
+if(deep):
+    from learning.deep_learning import DeepLearning
+    learning = DeepLearning(learning_object)
+    print 'deep'
+    learning.run_learning(test_size=0.2)
+else:
+    learning = ClassicMachineLearning(learning_object)
+    algo_name = sys.argv[2]
+    print algo_name
+    learning.run_learning(test_size=0.2, algo_name=algo_name)
 
-classic_ml = ClassicMachineLearning(learning_object)
-algo_name = 'RF1'
-print algo_name
-classic_ml.run_learning(algo_name=algo_name,test_size=0.2)
-print 'auc train:',classic_ml.evaluate_AUC_train()
-print 'auc test:',classic_ml.evaluate_AUC_test()
+print 'auc train:',learning.evaluate_AUC_train()
+print 'auc test:',learning.evaluate_AUC_test()
