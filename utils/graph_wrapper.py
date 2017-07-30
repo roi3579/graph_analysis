@@ -1,6 +1,7 @@
 from igraph import Graph
 from graph_algos.motif import Motif
 from graph_algos.flow import Flow
+from graph_algos.ab import Ab
 import pymysql
 from graph_algos.bfs import BFS
 import random
@@ -14,7 +15,8 @@ class GraphWrapper:
         self._index_to_vertex_dict = {}
         self._number_of_vertices = 0
         self._bfs = BFS()
-        self._flow = Flow()
+        # self._flow = Flow()
+        # self._ab = Ab()
 
     def __init__edges_list_from_list(self, edge_list):
         edge_to_weight_dict = {}
@@ -198,22 +200,28 @@ class GraphWrapper:
 
         return vertex_to_betweenness
 
-    def bfs_moments(self, vertices_list=None):
+    def bfs(self, vertices_list=None):
         vertex_to_bfs_moments = {}
+        result_flow_dict = {}
+        result_ab_dict = {}
         if vertices_list is not None:
             vertex_indexes = [self._vertex_to_index_dict[vertex_name] for vertex_name in vertices_list]
-            vertices_bfs_moments = self._bfs.bfs_momemts(self._graph, vertex_indexes)
+            vertices_bfs_moments, flow_dict, attractor_basin = self._bfs.bfs_momemts(self._graph, vertex_indexes)
             for index in range(len(vertex_indexes)):
                 vertex_index = vertex_indexes[index]
                 vertex_name = self._index_to_vertex_dict[vertex_index]
                 vertex_to_bfs_moments[vertex_name] = vertices_bfs_moments[vertex_index]
+                result_flow_dict[self._index_to_vertex_dict[vertex_index]] = flow_dict[vertex_index]
+                result_ab_dict[self._index_to_vertex_dict[vertex_index]] = attractor_basin[vertex_index]
         else:
-            vertices_bfs_moments = self._bfs.bfs_momemts(self._graph)
+            vertices_bfs_moments, flow_dict, attractor_basin = self._bfs.bfs_momemts(self._graph)
             for vertex_index in range(self._number_of_vertices):
                 vertex_name = self._index_to_vertex_dict[vertex_index]
                 vertex_to_bfs_moments[vertex_name] = vertices_bfs_moments[vertex_index]
+                result_flow_dict[self._index_to_vertex_dict[vertex_index]] = flow_dict[vertex_index]
+                result_ab_dict[self._index_to_vertex_dict[vertex_index]] = attractor_basin[vertex_index]
 
-        return vertex_to_bfs_moments
+        return vertex_to_bfs_moments, result_flow_dict, result_ab_dict
 
     def motif(self, vertices_list=None, motif_veriation_folder='./', motif_size=3):
         if vertices_list is not None:
@@ -227,15 +235,15 @@ class GraphWrapper:
             result_hist[self._index_to_vertex_dict[v]] = hist[v]
         return result_hist
 
-    def flow(self, vertices_list=None):
-        if vertices_list is not None:
-            vertices_list = [self._vertex_to_index_dict[v] for v in vertices_list]
-        flow_dict = self._flow.compute_flow(self._graph, vertices_list, threshold=0.1)
-
-        result_dict = {}
-        for v in flow_dict:
-            result_dict[self._index_to_vertex_dict[v]] = flow_dict[v]
-        return result_dict
+    # def flow(self, vertices_list=None):
+    #     if vertices_list is not None:
+    #         vertices_list = [self._vertex_to_index_dict[v] for v in vertices_list]
+    #     flow_dict = self._flow.compute_flow(self._graph, vertices_list, threshold=0.1)
+    #
+    #     result_dict = {}
+    #     for v in flow_dict:
+    #         result_dict[self._index_to_vertex_dict[v]] = flow_dict[v]
+    #     return result_dict
 
     def sample_uniform_from_edges(self, number_of_edges):
         sub_edges_list = random.sample(self.get_edges_list(), number_of_edges)
