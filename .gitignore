@@ -1,3 +1,4 @@
 .idea/
 graph_vm/
 *.pyc
+./data/roi_data/
