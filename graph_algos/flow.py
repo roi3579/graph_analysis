@@ -6,7 +6,7 @@ class Flow:
         for v in vertices_indexes:
             if u != v:
                 denominator = out_distances[v]
-                if denominator != inf:
+                if denominator != -1:
                     numerator = float(all_distances[v])
                     flow_u += (numerator/denominator)
         B_u = len([d for d in all_distances if d!=inf])

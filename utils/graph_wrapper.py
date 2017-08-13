@@ -200,28 +200,37 @@ class GraphWrapper:
 
         return vertex_to_betweenness
 
-    def bfs(self, vertices_list=None):
+    def bfs(self, features_list, vertices_list=None):
         vertex_to_bfs_moments = {}
         result_flow_dict = {}
         result_ab_dict = {}
         if vertices_list is not None:
             vertex_indexes = [self._vertex_to_index_dict[vertex_name] for vertex_name in vertices_list]
-            vertices_bfs_moments, flow_dict, attractor_basin = self._bfs.bfs_momemts(self._graph, vertex_indexes)
+            result = self._bfs.bfs(self._graph, features_list, vertex_indexes)
+            vertices_bfs_moments = result[0]
+            flow_dict = result[1]
+            attractor_basin = result[2]
             for index in range(len(vertex_indexes)):
                 vertex_index = vertex_indexes[index]
                 vertex_name = self._index_to_vertex_dict[vertex_index]
-                vertex_to_bfs_moments[vertex_name] = vertices_bfs_moments[vertex_index]
-                result_flow_dict[self._index_to_vertex_dict[vertex_index]] = flow_dict[vertex_index]
-                result_ab_dict[self._index_to_vertex_dict[vertex_index]] = attractor_basin[vertex_index]
+                if 'bfs' in features_list:
+                    vertex_to_bfs_moments[vertex_name] = vertices_bfs_moments[vertex_index]
+                if 'flow' in features_list:
+                    result_flow_dict[self._index_to_vertex_dict[vertex_index]] = flow_dict[vertex_index]
+                if 'ab' in features_list:
+                    result_ab_dict[self._index_to_vertex_dict[vertex_index]] = attractor_basin[vertex_index]
         else:
             vertices_bfs_moments, flow_dict, attractor_basin = self._bfs.bfs_momemts(self._graph)
             for vertex_index in range(self._number_of_vertices):
                 vertex_name = self._index_to_vertex_dict[vertex_index]
-                vertex_to_bfs_moments[vertex_name] = vertices_bfs_moments[vertex_index]
-                result_flow_dict[self._index_to_vertex_dict[vertex_index]] = flow_dict[vertex_index]
-                result_ab_dict[self._index_to_vertex_dict[vertex_index]] = attractor_basin[vertex_index]
+                if 'bfs' in features_list:
+                    vertex_to_bfs_moments[vertex_name] = vertices_bfs_moments[vertex_index]
+                if 'flow' in features_list:
+                    result_flow_dict[self._index_to_vertex_dict[vertex_index]] = flow_dict[vertex_index]
+                if 'ab' in features_list:
+                    result_ab_dict[self._index_to_vertex_dict[vertex_index]] = attractor_basin[vertex_index]
 
-        return vertex_to_bfs_moments, result_flow_dict, result_ab_dict
+        return [vertex_to_bfs_moments, result_flow_dict, result_ab_dict]
 
     def motif(self, vertices_list=None, motif_veriation_folder='./', motif_size=3):
         if vertices_list is not None:

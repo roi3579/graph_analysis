@@ -8,7 +8,7 @@ class BFS:
         self._flow = Flow()
         self._ab = Ab()
 
-    def bfs(self,graph,vertices_indexes=None):
+    def bfs(self,graph,features_list,vertices_indexes=None):
         if vertices_indexes is None:
             vertices_indexes = range(len(graph.vs))
 
@@ -25,33 +25,44 @@ class BFS:
 
         for u in vertices_indexes:
             out_distances = graph.shortest_paths_dijkstra(source=[u])[0]
-            all_distances = graph.shortest_paths_dijkstra(source=[u], mode="ALL")[0]
-            in_distances = graph.shortest_paths_dijkstra(source=[u], mode="IN")[0]
 
             out_distances = [d if d!=inf else -1 for d in out_distances]
-            vertex_distance_distribution = np.zeros(max(out_distances)+1)
-            for distance in out_distances:
-                if distance != -1:
-                    vertex_distance_distribution[distance]+=1
 
-            in_distances = [d if d!=inf else -1 for d in in_distances]
-            vertex_in_distance_distribution = np.zeros(max(in_distances)+1)
-            for distance in in_distances:
-                if distance != -1:
-                    vertex_in_distance_distribution[distance]+=1
+            if 'bfs' in features_list or 'ab' in features_list:
+                vertex_distance_distribution = np.zeros(max(out_distances)+1)
+                for distance in out_distances:
+                    if distance != -1:
+                        vertex_distance_distribution[distance]+=1
 
-            flow_dict[u] = self._flow.compute_flow(vertices_indexes, u, out_distances, all_distances)
+            if 'bfs' in features_list:
+                bfs_dist[u] = vertex_distance_distribution
 
-            attractor_basin_out_dist.append(vertex_distance_distribution.tolist())
-            attractor_basin_in_dist.append(vertex_in_distance_distribution.tolist())
+            if 'ab' in features_list:
+                in_distances = graph.shortest_paths_dijkstra(source=[u], mode="IN")[0]
 
-            bfs_dist[u] = vertex_distance_distribution
+                in_distances = [d if d!=inf else -1 for d in in_distances]
+                vertex_in_distance_distribution = np.zeros(max(in_distances)+1)
+                for distance in in_distances:
+                    if distance != -1:
+                        vertex_in_distance_distribution[distance]+=1
 
-        dist_moments = self.bfs_momemts(bfs_dist)
+                attractor_basin_out_dist.append(vertex_distance_distribution.tolist())
+                attractor_basin_in_dist.append(vertex_in_distance_distribution.tolist())
 
-        attractor_basin = self._ab.compute_ab(vertices_indexes, attractor_basin_out_dist, attractor_basin_in_dist)
+            if 'flow' in features_list:
+                all_distances = graph.shortest_paths_dijkstra(source=[u], mode="ALL")[0]
 
-        return dist_moments, flow_dict, attractor_basin
+                flow_dict[u] = self._flow.compute_flow(vertices_indexes, u, out_distances, all_distances)
+
+        dist_moments = {}
+        if 'bfs' in features_list:
+            dist_moments = self.bfs_momemts(bfs_dist)
+
+        attractor_basin = {}
+        if 'ab' in features_list:
+            attractor_basin = self._ab.compute_ab(vertices_indexes, attractor_basin_out_dist, attractor_basin_in_dist)
+
+        return [dist_moments, flow_dict, attractor_basin]
 
     def bfs_momemts(self, bfs_dist):
         dist_moments = {}
@@ -61,3 +72,4 @@ class BFS:
             lst.append(float(np.average(bfs_dist[key], weights=range(1,len(bfs_dist[key])+1))))
             lst.append(float(np.std(bfs_dist[key])))
             dist_moments[key] = lst
+        return dist_moments
