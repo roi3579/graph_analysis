@@ -43,9 +43,19 @@ feature_saver.save_vertex_features_to_file(closeness_features, output_dir+'/clos
 # betweenness_features= graph_wrapper.betweenness()
 # feature_saver.save_vertex_features_to_file(betweenness_features, output_dir+'/betweenness.txt')
 
-write_log('start bfs')
-bfs_moments= graph_wrapper.bfs_moments()
-feature_saver.save_vertex_features_to_file(bfs_moments, output_dir+'/bfs_moments_{0}.txt'.format(sample_size))
+features_list = ['bfs', 'flow', 'ab']
+features_list_str = str(features_list)
+write_log('start ' + features_list_str[1:-1])
+result = graph_wrapper.bfs(features_list=features_list)
+bfs_moments = result[0]
+flows = result[1]
+ab = result[2]
+if 'bfs' in features_list:
+    feature_saver.save_vertex_features_to_file(bfs_moments, output_dir+'/bfs_moments_{0}.txt'.format(sample_size))
+if 'flow' in features_list:
+    feature_saver.save_vertex_features_to_file(flows, output_dir+'/flows_{0}.txt'.format(sample_size))
+if 'ab' in features_list:
+    feature_saver.save_vertex_features_to_file(ab, output_dir+'/ab_{0}.txt'.format(sample_size))
 
 write_log('start motif 3')
 motifs = graph_wrapper.motif(vertices_list=None, motif_veriation_folder='./graph_algos/motifs_veriation',motif_size=3)
@@ -59,5 +69,3 @@ feature_saver.save_vertex_features_to_file(motifs, output_dir+'/motifs_4_{0}.txt
 # flows = graph_wrapper.flow()
 # feature_saver.save_vertex_features_to_file(flows, output_dir+'/flow.txt')
 # print 'finish',datetime.datetime.now()
-
-
