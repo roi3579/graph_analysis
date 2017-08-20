@@ -1,6 +1,5 @@
 import numpy as np
 from learning_object import LearningObject
-import random
 from sklearn.model_selection import train_test_split
 
 
@@ -18,10 +17,10 @@ class LearningLoader:
 
     def load_features_from_directory(self, *features_file_names):
         for file_name in features_file_names:
-            with open('{0}/{1}'.format(self._base_dir,file_name),'r') as f:
+            with open('{0}/{1}'.format(self._base_dir, file_name), 'r') as f:
                 lines = f.readlines()
             for line in lines:
-                features = line.replace('\n','').split(',')
+                features = line.replace('\n', '').split(',')
                 vertex = features[0]
                 features = [float(feature) for feature in features[1:]]
                 if vertex in self._vertex_to_features:
@@ -30,6 +29,7 @@ class LearningLoader:
                     self._vertex_to_features[vertex] = features
 
     def load_tags_from_file(self, tags_file_path):
+        tags_file_path = self._base_dir+tags_file_path
         self._vertex_to_tags = {}
         with open(tags_file_path) as tags_file:
             lines = tags_file.readlines()
@@ -39,10 +39,25 @@ class LearningLoader:
             tag = tags[1]
             self._vertex_to_tags[vertex] = int(tag)
 
-    def divide_train_test(self, test_size=0.2):
-        vertices = self._vertex_to_features.keys()
-        vertices_train, vertices_test = train_test_split(vertices, test_size=test_size)
-        return [vertices_train, vertices_test]
+    def divide_train_test(self, test_size=0.2, test_file_path=None):
+        self._test_vertices = []
+        self._train_vertices = []
+        if test_file_path is None:
+            vertices = self._vertex_to_features.keys()
+            vertices_train, vertices_test = train_test_split(vertices, test_size=test_size)
+            self._train_vertices = vertices_train
+            self._test_vertices = vertices_test
+            return [vertices_train, vertices_test]
+        else:
+            test_file_path = self._base_dir+test_file_path
+            test_vertices = {}
+            with file(test_file_path, 'r') as f:
+                for line in f:
+                    test_vertices[line.replace('\n', '')] = 1
+            for v in self._vertex_to_features:
+                if v not in test_vertices:
+                    self._train_vertices.append(v)
+            self._test_vertices = test_vertices.keys()
 
     def __zscoring(self, matrix):
         new_matrix = np.asmatrix(matrix)
@@ -57,23 +72,34 @@ class LearningLoader:
         return new_matrix
 
     def get_learning_object(self, zscoring=True):
-        features_matrix =[]
+        features_matrix = []
         for vertex in self._vertex_to_features:
             vertex_features = [vertex]
-            if vertex in self._vertex_to_tags:
-                vertex_features.append(self._vertex_to_tags[vertex])
-            else:
-                vertex_features.append(0)
+            vertex_features.append(self._vertex_to_tags[vertex])
             vertex_features.extend(self._vertex_to_features[vertex])
             features_matrix.append(vertex_features)
 
         features_matrix = np.asmatrix(features_matrix)
         if (zscoring):
-            final_matrix = self.__zscoring(features_matrix[:,2:].astype(float))
+            final_matrix = self.__zscoring(features_matrix[:, 2:].astype(float))
         else:
-            final_matrix = features_matrix[:,2:].astype(float)
-        tags_vector = features_matrix[:,1:2].astype(float)
-        return LearningObject(final_matrix, tags_vector)
+            final_matrix = features_matrix[:, 2:].astype(float)
 
-    def get_test_object(self,zscoring=True, vertices_list=[]):
-        return
+        test_vertices_dict = {v: 1 for v in self._test_vertices}
+        final_test_matrix = []
+        final_train_matrix = []
+        final_test_tags = []
+        final_train_tags = []
+        for i in range(features_matrix.shape[0]):
+            vertex = features_matrix[i, 0]
+            if str(vertex) in test_vertices_dict:
+                final_test_matrix.append(final_matrix[i, :].tolist()[0])
+                final_test_tags.append(float(features_matrix[i, 1]))
+            else:
+                final_train_matrix.append(final_matrix[i, :].tolist()[0])
+                final_train_tags.append(float(features_matrix[i, 1]))
+
+        return LearningObject(test_features_matrix=np.asmatrix(final_test_matrix),
+                              test_tags_vector=np.asmatrix(final_test_tags),
+                              train_features_matrix=np.asmatrix(final_train_matrix),
+                              train_tags_vector=np.asmatrix(final_train_tags))

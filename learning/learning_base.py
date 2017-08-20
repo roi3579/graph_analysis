@@ -5,17 +5,11 @@ from sklearn.model_selection import train_test_split
 
 class LearningBase:
     def __init__(self, learning_object):
-        self._features_matrix = learning_object.features_matrix
-        self._tags_vector = learning_object.tags_vector
+        self._features_train = learning_object.train_features_matrix
+        self._tags_train = learning_object.train_tags_vector.reshape(-1, 1)
+        self._features_test = learning_object.test_features_matrix
+        self._tags_test = learning_object.test_tags_vector.reshape(-1, 1)
         self._classifier = None
-
-    def _divide_test_train(self, test_size, random_state=None):
-        if random_state is not None:
-            self._features_train, self._features_test, self._tags_train, self._tags_test = \
-                train_test_split(self._features_matrix, self._tags_vector, test_size=test_size, random_state=1)
-        else:
-            self._features_train, self._features_test, self._tags_train, self._tags_test =\
-                train_test_split(self._features_matrix, self._tags_vector, test_size=test_size)
 
     def evaluate_AUC_test(self):
         return self.evaluate_AUC_general(self._classifier, self._features_test, self._tags_test)
