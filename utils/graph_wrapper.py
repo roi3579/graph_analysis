@@ -1,6 +1,7 @@
 from igraph import Graph
 from graph_algos.motif import Motif
 from graph_algos.flow import Flow
+from graph_algos.propagation_features import Propagation
 import pymysql
 from graph_algos.bfs import BFS
 import random
@@ -15,6 +16,7 @@ class GraphWrapper:
         self._number_of_vertices = 0
         self._bfs = BFS()
         self._flow = Flow()
+        self._propagation = Propagation()
 
     def __init__edges_list_from_list(self, edge_list):
         edge_to_weight_dict = {}
@@ -98,6 +100,18 @@ class GraphWrapper:
             graph_wrapper._index_to_vertex_dict[v_index] = self._index_to_vertex_dict[vertices[v_index]]
             graph_wrapper._vertex_to_index_dict[self._index_to_vertex_dict[vertices[v_index]]] = v_index
         return graph_wrapper
+
+    def __sub_graph_by_vertices(self, samples):
+        sub_edges_list = []
+        for e in self._graph.es:
+            if e.source in samples and e.target in samples:
+                v1 = e.source
+                v2 = e.target
+                sub_edges_list.append((self._index_to_vertex_dict[v1], self._index_to_vertex_dict[v2]))
+        sub_graph_wrapper = GraphWrapper()
+        edge_weight_dict = sub_graph_wrapper.__init__edges_list_from_list(sub_edges_list)
+        sub_graph_wrapper.__init_graph_by_edges_dict(edge_weight_dict, is_directed=self._graph.is_directed)
+        return sub_graph_wrapper
 
     def load_from_file(self, is_directed=False, file_path='./'):
         edge_to_weight_dict = self.__init_edges_list_from_file(file_path)
@@ -237,6 +251,12 @@ class GraphWrapper:
             result_dict[self._index_to_vertex_dict[v]] = flow_dict[v]
         return result_dict
 
+    def propagatoin_features(self, test_vertices, tags):
+        return self._propagation.get_vertices_features_by_neighbors(self.get_edges_list(),
+                                                                    self.get_vertices_list(),
+                                                                    tags,
+                                                                    test_vertices)
+
     def sample_uniform_from_edges(self, number_of_edges):
         sub_edges_list = random.sample(self.get_edges_list(), number_of_edges)
         sub_graph_wrapper = GraphWrapper()
@@ -268,18 +288,6 @@ class GraphWrapper:
     def sample_uniform_by_vertices(self, number_of_vertices=2):
         samples = {v.index:0 for v in random.sample(self._graph.vs, number_of_vertices)}
         sub_graph_wrapper = self.__sub_graph_by_vertices(samples)
-        return sub_graph_wrapper
-
-    def __sub_graph_by_vertices(self, samples):
-        sub_edges_list = []
-        for e in self._graph.es:
-            if e.source in samples and e.target in samples:
-                v1 = e.source
-                v2 = e.target
-                sub_edges_list.append((self._index_to_vertex_dict[v1], self._index_to_vertex_dict[v2]))
-        sub_graph_wrapper = GraphWrapper()
-        edge_weight_dict = sub_graph_wrapper.__init__edges_list_from_list(sub_edges_list)
-        sub_graph_wrapper.__init_graph_by_edges_dict(edge_weight_dict, is_directed=self._graph.is_directed)
         return sub_graph_wrapper
 
     def create_sub_graph(self, vertices_list):

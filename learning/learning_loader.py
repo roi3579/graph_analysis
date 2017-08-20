@@ -1,12 +1,20 @@
 import numpy as np
 from learning_object import LearningObject
+import random
+from sklearn.model_selection import train_test_split
+
 
 class LearningLoader:
     def __init__(self, directory_path):
         self._vertex_to_features = {}
         self._vertex_to_tags = {}
         self._base_dir = directory_path
-        pass
+        self._train_vertices = []
+        self._test_vertices = []
+
+    @property
+    def tags(self):
+        return self._vertex_to_tags
 
     def load_features_from_directory(self, *features_file_names):
         for file_name in features_file_names:
@@ -22,13 +30,19 @@ class LearningLoader:
                     self._vertex_to_features[vertex] = features
 
     def load_tags_from_file(self, tags_file_path):
+        self._vertex_to_tags = {}
         with open(tags_file_path) as tags_file:
             lines = tags_file.readlines()
         for line in lines:
-            tags = line.replace('\n','').split()
+            tags = line.replace('\n', '').split()
             vertex = tags[0]
             tag = tags[1]
             self._vertex_to_tags[vertex] = int(tag)
+
+    def divide_train_test(self, test_size=0.2):
+        vertices = self._vertex_to_features.keys()
+        vertices_train, vertices_test = train_test_split(vertices, test_size=test_size)
+        return [vertices_train, vertices_test]
 
     def __zscoring(self, matrix):
         new_matrix = np.asmatrix(matrix)
@@ -60,3 +74,6 @@ class LearningLoader:
             final_matrix = features_matrix[:,2:].astype(float)
         tags_vector = features_matrix[:,1:2].astype(float)
         return LearningObject(final_matrix, tags_vector)
+
+    def get_test_object(self,zscoring=True, vertices_list=[]):
+        return
