@@ -23,6 +23,8 @@ dir_path = r'./../data/directed/livejournal/snap0001/'
 dois = os.listdir(dir_path +'/doi_{0}/'.format(sample_size))
 with file(dir_path+'learning_resuls.txt','w') as result_file:
     for doi in dois:
+        if doi == 'accountstypes.txt':
+            continue
         print doi
         result_file.writelines('{0}\n'.format(doi))
         learning_loader = get_learning_loader(dir_path, doi, sample_size)
@@ -54,7 +56,7 @@ with file(dir_path+'learning_resuls.txt','w') as result_file:
                 print 'auc train:', auc_train
                 result_file.writelines('auc train: {0}\n'.format(auc_train))
                 auc_test = learning.evaluate_AUC_test()
-                result_file.writelines('auc test: {0}'.format(auc_test))
+                result_file.writelines('auc test: {0}\n'.format(auc_test))
                 print 'auc test:', auc_test
                 result_file.flush()
                 with file('{0}/clf_{1}/{2}_{3}'.format(dir_path,sample_size,algo_name,doi),'w') as pickle_file:
