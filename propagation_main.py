@@ -35,7 +35,11 @@ def propagation_by_snap_number(i):
     dois = os.listdir(doi_dir)
     # dois = ['music.txt']
     for doi in dois:
+        propagation_dir = output_dir + '/propagation_{0}_{1}/'.format(sample_size, int(test_size * 100))
+        if os.path.isfile(propagation_dir + '/propagation_{0}'.format(doi)):
+            continue
         print doi
+
         leaning_loader.load_tags_from_file('/doi_{0}/{1}'.format(sample_size, doi))
         tags = leaning_loader.tags
         # output_dir = './data/roi_data/'
@@ -49,7 +53,6 @@ def propagation_by_snap_number(i):
         propagation = graph_wrapper.propagatoin_features(test_vertices, tags)
         if not os.path.exists(output_dir + '/propagation_{0}_{1}/'):
             os.makedirs(output_dir + '/propagation_{0}_{1}/')
-        propagation_dir = output_dir + '/propagation_{0}_{1}/'.format(sample_size, int(test_size * 100))
         if not os.path.exists(propagation_dir):
             os.makedirs(propagation_dir)
         feature_saver.save_vertex_features_to_file(propagation, propagation_dir + '/propagation_{0}'.format(doi))
