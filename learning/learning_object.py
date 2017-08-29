@@ -1,14 +1,24 @@
 
 
 class LearningObject:
-    def __init__(self, features_matrix, tags_vector):
-        self._features_matrix = features_matrix
-        self._tags_vector = tags_vector
+    def __init__(self, train_features_matrix, train_tags_vector, test_features_matrix, test_tags_vector):
+        self._train_features_matrix = train_features_matrix
+        self._train_tags_vector = train_tags_vector.reshape(-1, 1)
+        self._test_features_matrix = test_features_matrix
+        self._test_tags_vector = test_tags_vector.reshape(-1, 1)
 
     @property
-    def features_matrix(self):
-        return self._features_matrix
+    def train_features_matrix(self):
+        return self._train_features_matrix
 
     @property
-    def tags_vector(self):
-        return self._tags_vector
+    def train_tags_vector(self):
+        return self._train_tags_vector
+
+    @property
+    def test_features_matrix(self):
+        return self._test_features_matrix
+
+    @property
+    def test_tags_vector(self):
+        return self._test_tags_vector
