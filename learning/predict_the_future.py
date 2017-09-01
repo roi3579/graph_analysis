@@ -42,9 +42,9 @@ for doi in dois:
                                                 'page_rank_{0}.txt'.format(sample_size),
                                                 'closeness_{0}.txt'.format(sample_size),
                                                 'bfs_moments_{0}.txt'.format(sample_size),
-                                                'motifs_3_{0}.txt'.format(sample_size),)
-                                                # 'motifs_4_{0}.txt'.format(sample_size),
-                                                # 'propagation_{0}_20/propagation_{1}'.format(sample_size,doi))
+                                                'motifs_3_{0}.txt'.format(sample_size),
+                                                'motifs_4_{0}.txt'.format(sample_size),
+                                                'propagation_{0}_20/propagation_{1}'.format(sample_size,doi))
 
     leaning_loader.load_tags_from_file('/doi_{0}/{1}'.format(sample_size, doi))
     leaning_loader.divide_train_test(test_file_path='test_20_{0}.txt'.format(sample_size))

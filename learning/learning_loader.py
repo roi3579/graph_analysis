@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 class LearningLoader:
     def __init__(self, directory_path):
         self._vertex_to_features = {}
+        self._vertex_to_final_features = {}
         self._vertex_to_tags = {}
         self._base_dir = directory_path
         self._train_vertices = []
@@ -14,6 +15,9 @@ class LearningLoader:
     @property
     def tags(self):
         return self._vertex_to_tags
+
+    def features(self, vertex):
+        return self._vertex_to_final_features[vertex]
 
     def load_features_from_directory(self, *features_file_names):
         for file_name in features_file_names:
@@ -74,10 +78,11 @@ class LearningLoader:
     def get_learning_object(self, zscoring=True):
         features_matrix = []
         for vertex in self._vertex_to_features:
-            vertex_features = [vertex]
-            vertex_features.append(self._vertex_to_tags[vertex])
-            vertex_features.extend(self._vertex_to_features[vertex])
-            features_matrix.append(vertex_features)
+            if vertex in self._vertex_to_tags and vertex in self._vertex_to_features:
+                vertex_features = [vertex]
+                vertex_features.append(self._vertex_to_tags[vertex])
+                vertex_features.extend(self._vertex_to_features[vertex])
+                features_matrix.append(vertex_features)
 
         features_matrix = np.asmatrix(features_matrix)
         if (zscoring):
@@ -90,16 +95,24 @@ class LearningLoader:
         final_train_matrix = []
         final_test_tags = []
         final_train_tags = []
+        test_vertices = []
+        train_vertices = []
         for i in range(features_matrix.shape[0]):
             vertex = features_matrix[i, 0]
             if str(vertex) in test_vertices_dict:
                 final_test_matrix.append(final_matrix[i, :].tolist()[0])
                 final_test_tags.append(float(features_matrix[i, 1]))
+                test_vertices.append(str(vertex))
             else:
                 final_train_matrix.append(final_matrix[i, :].tolist()[0])
                 final_train_tags.append(float(features_matrix[i, 1]))
+                train_vertices.append(str(vertex))
+            self._vertex_to_final_features[str(vertex)] = final_matrix[i, :].tolist()[0]
 
         return LearningObject(test_features_matrix=np.asmatrix(final_test_matrix),
                               test_tags_vector=np.asmatrix(final_test_tags),
+                              test_vertices=test_vertices,
                               train_features_matrix=np.asmatrix(final_train_matrix),
-                              train_tags_vector=np.asmatrix(final_train_tags))
+                              train_tags_vector=np.asmatrix(final_train_tags),
+                              train_vertices=train_vertices)
+

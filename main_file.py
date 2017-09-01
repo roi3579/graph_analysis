@@ -39,9 +39,9 @@ write_log('start closeness')
 closeness_features= graph_wrapper.closeness()
 feature_saver.save_vertex_features_to_file(closeness_features, output_dir+'/closeness_{0}.txt'.format(sample_size))
 
-# write_log('start betweenness')
-# betweenness_features= graph_wrapper.betweenness()
-# feature_saver.save_vertex_features_to_file(betweenness_features, output_dir+'/betweenness.txt')
+write_log('start betweenness')
+betweenness_features= graph_wrapper.betweenness()
+feature_saver.save_vertex_features_to_file(betweenness_features, output_dir+'/betweenness.txt')
 
 write_log('start bfs')
 bfs_moments= graph_wrapper.bfs_moments()
